@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Grade Calculator – NC State</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+
+<header>
+  <div class="header-text">
+    <h1>Grade Calculator for NC State Students</h1>
+  </div>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('pct', this)">% Weighted</button>
+  <button class="tab-btn"        onclick="showTab('pts', this)">Points-Based</button>
+</div>
+
+<main>
+
+  <div id="page-pct" class="page active">
+
+    <div class="card" style="margin-top:4px">
+      <div class="card-header">Course Info</div>
+      <div class="card-body">
+        <label class="lbl">Course name (optional)</label>
+        <input type="text" id="pct-course" placeholder="e.g. CSC 116 – Intro to Computing" />
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">Grade Categories</div>
+      <div class="card-body">
+        <div class="weight-bar-wrap">
+          <div class="weight-bar-bg">
+            <div class="weight-bar-fill" id="pct-bar-fill"></div>
+          </div>
+          <div class="weight-bar-text" id="pct-bar-text">0 / 100% used</div>
+        </div>
+        <div id="pct-cat-list"></div>
+        <button class="add-cat-btn" onclick="addPctCat()">+ Add Category</button>
+      </div>
+    </div>
+
+    <div class="grade-preview" id="pct-preview">
+      <div class="preview-header">Current Grade</div>
+      <div class="grade-display">
+        <div>
+          <div class="preview-sublabel">Grade so far</div>
+          <div class="grade-pct-big" id="pct-prev-pct">—</div>
+        </div>
+        <div class="grade-divider"></div>
+        <div>
+          <div class="preview-sublabel">Letter</div>
+          <div class="grade-letter-big" id="pct-prev-letter">—</div>
+        </div>
+      </div>
+      <div class="grade-gpa-strip" id="pct-prev-gpa"></div>
+      <div class="cat-breakdown" id="pct-prev-table"></div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <div class="card-header">Final Exam — What Do I Need?</div>
+      <div class="card-body">
+        <p class="helper-text">
+          Enter the final's weight and pick a target grade to see what score you need.
+        </p>
+        <div class="two-col">
+          <div>
+            <label class="lbl">Final exam weight %</label>
+            <input type="number" id="pct-final-w" placeholder="e.g. 25" min="0" max="100" oninput="calcPctFinal()" />
+          </div>
+          <div>
+            <label class="lbl">Target grade</label>
+            <select id="pct-target" onchange="calcPctFinal()">
+              <option value="">— choose —</option>
+              <option value="97">A+</option>
+              <option value="93">A</option>
+              <option value="90">A-</option>
+              <option value="87">B+</option>
+              <option value="83">B</option>
+              <option value="80">B-</option>
+              <option value="77">C+</option>
+              <option value="73">C</option>
+              <option value="70">C-</option>
+              <option value="67">D+</option>
+              <option value="63">D</option>
+              <option value="60">D-</option>
+            </select>
+          </div>
+        </div>
+        <div class="final-needed-box" id="pct-final-box"></div>
+      </div>
+    </div>
+
+    <div class="error-box" id="pct-error"></div>
+    <button class="calc-btn" onclick="calcPct()">Calculate My Grade</button>
+
+  </div>
+
+  <div id="page-pts" class="page">
+
+    <div class="card" style="margin-top:4px">
+      <div class="card-header">Course Info</div>
+      <div class="card-body">
+        <label class="lbl">Course name (optional)</label>
+        <input type="text" id="pts-course" placeholder="e.g. MA 241 – Calculus II" />
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">Assignments &amp; Categories</div>
+      <div class="card-body">
+        <p class="helper-text">
+          Group by category (e.g. Homework, Exams) or put everything in one.
+        </p>
+        <div id="pts-cat-list"></div>
+        <button class="add-cat-btn" onclick="addPtsCat()">+ Add Category</button>
+        <div class="running-total" id="pts-running"></div>
+      </div>
+    </div>
+
+    <div class="grade-preview" id="pts-preview">
+      <div class="preview-header">Current Grade</div>
+      <div class="grade-display">
+        <div>
+          <div class="preview-sublabel">Grade so far</div>
+          <div class="grade-pct-big" id="pts-prev-pct">—</div>
+        </div>
+        <div class="grade-divider"></div>
+        <div>
+          <div class="preview-sublabel">Letter</div>
+          <div class="grade-letter-big" id="pts-prev-letter">—</div>
+        </div>
+      </div>
+      <div class="grade-gpa-strip" id="pts-prev-gpa"></div>
+      <div class="cat-breakdown" id="pts-prev-table"></div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <div class="card-header">Final Exam — What Do I Need?</div>
+      <div class="card-body">
+        <p class="helper-text">
+          Enter the final's total points and a target grade.
+        </p>
+        <div class="two-col">
+          <div>
+            <label class="lbl">Final exam total points</label>
+            <input type="number" id="pts-final-pts" placeholder="e.g. 200" min="0" oninput="calcPtsFinal()" />
+          </div>
+          <div>
+            <label class="lbl">Target grade</label>
+            <select id="pts-target" onchange="calcPtsFinal()">
+              <option value="">— choose —</option>
+              <option value="97">A+</option>
+              <option value="93">A</option>
+              <option value="90">A-</option>
+              <option value="87">B+</option>
+              <option value="83">B</option>
+              <option value="80">B-</option>
+              <option value="77">C+</option>
+              <option value="73">C</option>
+              <option value="70">C-</option>
+              <option value="67">D+</option>
+              <option value="63">D</option>
+              <option value="60">D-</option>
+            </select>
+          </div>
+        </div>
+        <div class="final-needed-box" id="pts-final-box"></div>
+      </div>
+    </div>
+
+    <div class="error-box" id="pts-error"></div>
+    <button class="calc-btn" onclick="calcPts()">Calculate My Grade</button>
+
+  </div>
+
+</main>
+
+<script src="gradeScale.js"></script>
+<script src="helpers.js"></script>
+<script src="pctMode.js"></script>
+<script src="ptsMode.js"></script>
+<script src="main.js"></script>
+</body>
+</html>
